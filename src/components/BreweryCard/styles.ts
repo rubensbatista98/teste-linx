@@ -49,7 +49,8 @@ export default makeStyles<Theme, StylesProps>((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    margin: '0 auto'
   },
   action: {
     height: '100%',
