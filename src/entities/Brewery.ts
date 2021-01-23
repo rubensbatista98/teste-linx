@@ -1,18 +1,21 @@
-export type BreweryType =
-  | 'brewpub'
-  | 'contract'
-  | 'closed'
-  | 'micro'
-  | 'nano'
-  | 'planning'
-  | 'proprietor'
-  | 'regional';
+export const BREWERY_TYPES = [
+  'brewpub',
+  'contract',
+  'closed',
+  'micro',
+  'nano',
+  'planning',
+  'proprietor',
+  'regional'
+] as const;
+
+export type BreweryType = typeof BREWERY_TYPES[number];
 
 export type Brewery = {
   id: number;
   name: string;
   brewery_type: BreweryType;
-  website: string;
+  website_url: string;
   phone: string;
   street: string;
   city: string;
