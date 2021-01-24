@@ -1,26 +1,11 @@
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved
-} from '@testing-library/react';
+import { screen, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
 import fetch, { enableFetchMocks } from 'jest-fetch-mock';
 
+import { renderWithRouter } from 'tests/helpers';
 import { breweriesMock } from 'pages/__mocks__';
 
 import Home from 'pages/Home';
-
-type RouterOptions = {
-  route?: string;
-};
-
-function renderWithRouter(ui: React.ReactElement, options: RouterOptions = {}) {
-  const { route = '/' } = options;
-  window.history.pushState({}, 'Test page', route);
-
-  return render(ui, { wrapper: BrowserRouter });
-}
 
 enableFetchMocks();
 
