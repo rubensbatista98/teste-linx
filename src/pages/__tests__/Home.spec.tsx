@@ -60,4 +60,30 @@ describe('<Home />', () => {
 
     expect(window.location.pathname).toBe(`/breweries/${breweriesMock[4].id}`);
   });
+
+  it('should fetch breweries by page when uses pagination', async () => {
+    fetch.mockResponse(JSON.stringify(breweriesMock));
+
+    renderWithRouter(<Home />);
+
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+
+    const pageOneLink = screen.getByLabelText(/page 1/i);
+    const pageTwoLink = screen.getByLabelText(/page 2/i);
+
+    expect(pageOneLink).toHaveAttribute('aria-current', 'true');
+    expect(pageTwoLink).not.toHaveAttribute('aria-current');
+
+    userEvent.click(pageTwoLink);
+
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+
+    expect(pageOneLink).not.toHaveAttribute('aria-current');
+    expect(pageTwoLink).toHaveAttribute('aria-current', 'true');
+
+    expect(new URLSearchParams(window.location.search).get('page')).toBe('2');
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.openbrewerydb.org/breweries?page=2'
+    );
+  });
 });
