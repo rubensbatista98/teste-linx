@@ -1,23 +1,42 @@
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { CircularProgress, Grid, Typography } from '@material-ui/core';
+import {
+  CircularProgress,
+  FormControl,
+  Grid,
+  InputLabel,
+  Select,
+  Typography
+} from '@material-ui/core';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 
 import BreweryCard from 'components/BreweryCard';
 
 import { Brewery } from 'entities';
+// importing from the entities index file gives a webpack error
+import { BREWERY_TYPES } from 'entities/Brewery';
 import { useFetch } from 'utils/hooks';
 
 function Home() {
   const history = useHistory();
   const location = useLocation();
 
-  const pageQuery = location.search
-    ? new URLSearchParams(location.search).get('page')
+  const searchParams = location.search
+    ? new URLSearchParams(location.search)
     : null;
 
-  const ENDPOINT = `breweries${pageQuery ? `?page=${pageQuery}` : ''}`;
+  const filter = searchParams?.get('filter') ?? '';
+  const shouldFilter = Boolean(filter);
+  const page = searchParams?.get('page') ?? 1;
 
-  const { data: breweries, status, error } = useFetch<Brewery[]>(ENDPOINT);
+  const QUERY = location.search
+    ? shouldFilter
+      ? `?by_type=${filter}`
+      : `?page=${page}`
+    : '';
+
+  const { data: breweries, status, error } = useFetch<Brewery[]>(
+    `breweries${QUERY}`
+  );
 
   const isLoading = status === 'pending';
 
@@ -29,8 +48,15 @@ function Home() {
     );
   }
 
-  function handleClick(id: number) {
+  function goToDetails(id: number) {
     history.push(`breweries/${id}`);
+  }
+
+  function handleFilter(
+    event: React.ChangeEvent<{ name?: string; value: unknown }>
+  ) {
+    const { value } = event.target;
+    value ? history.push(`/breweries?filter=${value}`) : history.push('/');
   }
 
   return (
@@ -39,7 +65,6 @@ function Home() {
         container
         spacing={2}
         component="section"
-        justify="center"
         aria-describedby={isLoading ? '#progress' : undefined}
         aria-busy={isLoading}
         aria-live="polite"
@@ -50,29 +75,56 @@ function Home() {
           </Grid>
         ) : (
           <>
+            <Grid item xs={12}>
+              <FormControl>
+                <InputLabel htmlFor="filter">Filter</InputLabel>
+                <Select
+                  native
+                  value={filter}
+                  onChange={handleFilter}
+                  inputProps={{
+                    name: 'filter',
+                    id: 'filter'
+                  }}
+                >
+                  <option aria-label="None" value="" />
+
+                  {BREWERY_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             {breweries?.map((brewery) => (
               <Grid key={brewery.id} item xs={12} sm={6} md={4} lg={3}>
-                <BreweryCard {...brewery} onClick={handleClick} />
+                <BreweryCard {...brewery} onClick={goToDetails} />
               </Grid>
             ))}
 
-            <Pagination
-              page={pageQuery ? Number(pageQuery) : 1}
-              count={3}
-              hideNextButton
-              hidePrevButton
-              shape="rounded"
-              color="primary"
-              renderItem={(item) => (
-                <PaginationItem
-                  component={Link}
-                  to={`/breweries${
-                    item.page === 1 ? '' : `?page=${item.page}`
-                  }`}
-                  {...item}
+            {shouldFilter ? null : (
+              <Grid item container xs={12} justify="center">
+                <Pagination
+                  page={Number(page)}
+                  count={3}
+                  hideNextButton
+                  hidePrevButton
+                  shape="rounded"
+                  color="primary"
+                  renderItem={(item) => (
+                    <PaginationItem
+                      component={Link}
+                      to={`/breweries${
+                        item.page === 1 ? '' : `?page=${item.page}`
+                      }`}
+                      {...item}
+                    />
+                  )}
                 />
-              )}
-            />
+              </Grid>
+            )}
           </>
         )}
       </Grid>
