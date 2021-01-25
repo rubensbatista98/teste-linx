@@ -9,7 +9,7 @@ export function useFetch<TData = unknown>(endpoint: string) {
   const [status, setStatus] = React.useState<Status>('pending');
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     setStatus('pending');
 
     api(`${API_URL}/${endpoint}`).then(
