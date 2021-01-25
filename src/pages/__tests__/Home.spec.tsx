@@ -86,4 +86,33 @@ describe('<Home />', () => {
       'https://api.openbrewerydb.org/breweries?page=2'
     );
   });
+
+  it('should fetch breweries by type when filter', async () => {
+    fetch.mockResponse(JSON.stringify(breweriesMock));
+
+    renderWithRouter(<Home />);
+
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+
+    userEvent.selectOptions(screen.getByLabelText(/filter/i), 'micro');
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+
+    expect(screen.getByLabelText(/filter/i)).toHaveValue('micro');
+    expect(new URLSearchParams(window.location.search).get('filter')).toBe(
+      'micro'
+    );
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.openbrewerydb.org/breweries?by_type=micro'
+    );
+
+    userEvent.selectOptions(screen.getByLabelText(/filter/i), '');
+
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+
+    expect(screen.getByLabelText(/filter/i)).toHaveValue('');
+    expect(window.location.pathname).toBe('/');
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.openbrewerydb.org/breweries'
+    );
+  });
 });
