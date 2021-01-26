@@ -14,13 +14,16 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:coverage": "yarn test --watchAll=false --coverage",
     "eject": "react-scripts eject"
   },
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.{js,jsx,ts,tsx}",
       "!<rootDir>/node_modules/",
+      "!<rootDir>/src/index.tsx",
       "!<rootDir>/src/entities/**/*",
+      "!<rootDir>/src/Routes/**/*",
       "!**/*.d.ts"
     ]
   },
