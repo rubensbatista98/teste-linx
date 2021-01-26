@@ -65,6 +65,7 @@ function Home() {
         container
         spacing={2}
         component="section"
+        justify="center"
         aria-describedby={isLoading ? '#progress' : undefined}
         aria-busy={isLoading}
         aria-live="polite"
@@ -98,11 +99,17 @@ function Home() {
               </FormControl>
             </Grid>
 
-            {breweries?.map((brewery) => (
-              <Grid key={brewery.id} item xs={12} sm={6} md={4} lg={3}>
-                <BreweryCard {...brewery} onClick={goToDetails} />
-              </Grid>
-            ))}
+            {breweries?.length ? (
+              breweries?.map((brewery) => (
+                <Grid key={brewery.id} item xs={12} sm={6} md={4} lg={3}>
+                  <BreweryCard {...brewery} onClick={goToDetails} />
+                </Grid>
+              ))
+            ) : (
+              <Typography component="h1" variant="h4">
+                No breweries found.
+              </Typography>
+            )}
 
             {shouldFilter ? null : (
               <Grid item container xs={12} justify="center">
