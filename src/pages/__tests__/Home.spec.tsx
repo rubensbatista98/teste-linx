@@ -115,4 +115,16 @@ describe('<Home />', () => {
       'https://api.openbrewerydb.org/breweries'
     );
   });
+
+  it('should render message when has no breweries', async () => {
+    fetch.mockResponse(JSON.stringify([]));
+
+    renderWithRouter(<Home />);
+
+    await waitForElementToBeRemoved(() => screen.getByLabelText(/loading/i));
+
+    expect(
+      screen.getByRole('heading', { name: /no breweries found/i })
+    ).toBeInTheDocument();
+  });
 });
