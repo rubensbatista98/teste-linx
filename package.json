@@ -23,6 +23,7 @@
       "src/**/*.{js,jsx,ts,tsx}",
       "!<rootDir>/node_modules/",
       "!<rootDir>/src/index.tsx",
+      "!<rootDir>/src/App.tsx",
       "!<rootDir>/src/entities/**/*",
       "!<rootDir>/src/Routes/**/*",
       "!**/*.d.ts"
